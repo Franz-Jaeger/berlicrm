@@ -61,7 +61,7 @@ class Pdfsettings_List_View extends Vtiger_Index_View {
 	 * Function to initialize the required data in smarty to display the List View Contents
 	 */
 	public function initializeListViewContents(Vtiger_Request $request, Vtiger_Viewer $viewer) {
-		global $default_language, $current_language;
+		global $default_language, $current_language, $current_user;
 		$module = $request->getModule();
 		$moduleModel = Vtiger_Module_Model::getInstance($module);
  		//get language file for PDF output
@@ -87,7 +87,7 @@ class Pdfsettings_List_View extends Vtiger_Index_View {
 			$pdfsettings = $adb->pquery($pdfsettings_query,array());
 			$noofpickrows = $adb->num_rows($pdfsettings);
 			for($j = 0; $j < $noofpickrows; $j++) {
-				if ($adb->query_result($pdfsettings,$j,'pdfeditable')==1){
+				if ($adb->query_result($pdfsettings,$j,'pdfeditable')==1 and $current_user->is_admin !='on'){
 					$pdfpermission[$fld_module][$adb->query_result($pdfsettings,$j,'pdffieldname')]= 'checked="checked"';
 					$pdfactive[$fld_module][$adb->query_result($pdfsettings,$j,'pdffieldname')]= 'disabled';
 				}
@@ -209,7 +209,7 @@ class Pdfsettings_List_View extends Vtiger_Index_View {
 
 			//get product description information
 			//group
-			$gproddetailarray[$fld_module] = array($pdf_details[$fld_module][gprodname],$pdf_details[$fld_module][gproddes],$pdf_details[$fld_module][gprodcom]);
+			$gproddetailarray[$fld_module] = array($pdf_details[$fld_module]['gprodname'],$pdf_details[$fld_module]['gproddes'],$pdf_details[$fld_module]['gprodcom']);
 			foreach($gproddetailarray[$fld_module] as $value){
 				if ($value=='true') {
 					$gproddetails[$fld_module][]='checked="checked"';
@@ -219,7 +219,7 @@ class Pdfsettings_List_View extends Vtiger_Index_View {
 				}
 			}
 			//individual
-			$iproddetailarray = array($pdf_details[$fld_module][iprodname],$pdf_details[$fld_module][iproddes],$pdf_details[$fld_module][iprodcom]);
+			$iproddetailarray = array($pdf_details[$fld_module]['iprodname'],$pdf_details[$fld_module]['iproddes'],$pdf_details[$fld_module]['iprodcom']);
 			foreach($iproddetailarray as $value){
 				if ($value=='true') {
 					$iproddetails[$fld_module][]='checked="checked"';

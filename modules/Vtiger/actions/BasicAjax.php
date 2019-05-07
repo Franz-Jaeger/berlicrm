@@ -9,7 +9,7 @@
  *************************************************************************************/
 
 // if display_errors is enabled, suppress notices and warnings for ajax calls to not break JSON responses
-error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_STRICT);
 
 class Vtiger_BasicAjax_Action extends Vtiger_Action_Controller {
 
@@ -28,13 +28,26 @@ class Vtiger_BasicAjax_Action extends Vtiger_Action_Controller {
         // get results for autocomplete fields (uitype cr16)
         if ($searchModule == "Picklist") {
             $fieldname = $request->get('fieldname');
-            // sanitize fieldname for use as tablename
-            $ftmp = explode("_",$fieldname);
-            if ($ftmp[0]!="cf" || !is_numeric($ftmp[1])) {
+            // validate $fieldname for $relatedModule
+            $fieldmodel = Vtiger_Field_Model::getInstance($fieldname,Vtiger_Module_Model::getInstance($relatedModule));
+            if (!$fieldmodel) {
                 throw new AppException(vtranslate('LBL_NO_RECORDS_FOUND'));
             }
             global $adb;
-            $q = "SELECT $fieldname as value FROM vtiger_$fieldname WHERE presence = 1 AND $fieldname LIKE ? ORDER BY sortorderid";
+            if ($fieldmodel->uitype=="crs16") {
+                $recordid = (int) $request->get("recordid");
+                // select only ununsed entries
+                $q = "SELECT $fieldname as value FROM vtiger_$fieldname LEFT JOIN {$fieldmodel->table} USING ({$fieldmodel->column}) 
+                    WHERE presence = 1 AND $fieldname LIKE ? AND ({$fieldmodel->table}.$fieldname IS NULL";
+                if ($recordid>0) {
+                    // when editing, allow currently used entry too
+                    $q .= " OR {$fieldmodel->block->module->basetableid} = {$recordid}";
+                }
+                $q .= ") ORDER BY sortorderid";
+            }
+            else {
+                $q = "SELECT $fieldname as value FROM vtiger_$fieldname WHERE presence = 1 AND $fieldname LIKE ? ORDER BY sortorderid";
+            }
             $res = $adb->pquery($q,array($searchValue."%"));
             while ($res && $row=$adb->fetchByAssoc($res,-1,false)) {
                 $result[] = array('value'=>$row['value']);

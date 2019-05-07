@@ -841,7 +841,10 @@ $languageStrings = array(
 	'LBL_CSV_FORMAT' => 'CSV-Format',
 	'LBL_EXCEL_FORMAT' => 'Excel-Format',
 
-
+    'LBL_ENABLE_COMMENTS_FOR_MODULE' => 'Kommentare nach Modul de-/aktivieren',
+    'LBL_MODULE' => 'Modul',
+    'LBL_COMMENTS_ENABLED' => 'Kommentare erlaubt',
+    'LBL_SAVE_SUCCESS'=>'Einstellung erfolgreich gespeichert.',
 );
 
 $jsLanguageStrings = array(
@@ -893,7 +896,7 @@ $jsLanguageStrings = array(
 	'JS_MORE_THAN_ONE_ITEM_SELECTED' => 'mehr als ein Datensatz ausgewählt',
 	'JS_NO_CREATE_OR_NOT_QUICK_CREATE_ENABLED' => 'Sie haben dafür keine Berechtigung',
 	'JS_NO_ITEM_SELECTED' => 'kein Datensatz ausgewählt',
-	'JS_NO_RECORDS_RELATED_TO_THIS_FILTER' => 'es gibt keine Daten, welche den FIlterkriterien entsprechen',
+	'JS_NO_RECORDS_RELATED_TO_THIS_FILTER' => 'es gibt keine Daten, welche den Filterkriterien entsprechen',
 	'JS_NO_RESULTS_FOUND' => 'keine Ergebnisse gefunden',
 	'JS_NO_VIEW_PERMISSION_AFTER_SAVE' => 'Nach dem Speichern können Sie den Eintrag auf Grund der Rechteeinstellungen nicht mehr sehen. Wollen Sie das wirklich?',
 	'JS_NUMBER_SHOULD_BE_LESS_THAN_32' => 'Zahl sollte weniger als 32 sein',

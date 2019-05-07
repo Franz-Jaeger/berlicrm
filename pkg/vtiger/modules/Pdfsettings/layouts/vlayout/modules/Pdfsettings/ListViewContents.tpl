@@ -9,7 +9,7 @@
 *
  ********************************************************************************/
 -->*}
-<script language="JavaScript" type="text/javascript" src="modules/Pdfsettings/languages/{php} echo $_SESSION['authenticated_user_language'];{/php}/{php} echo $_SESSION['authenticated_user_language'];{/php}.lang.js"></script>
+<script language="JavaScript" type="text/javascript" src="modules/Pdfsettings/languages/{$CURRENT_USER_MODEL->get('language')}/{$CURRENT_USER_MODEL->get('language')}.lang.js"></script>
 <script language="JavaScript" type="text/javascript" src="modules/Pdfsettings/third-party/js/tab-view.js"></script>
 <link rel="stylesheet" href="modules/Pdfsettings/third-party/js/tab-view.css" type="text/css">
 {strip}
@@ -19,7 +19,7 @@
 <form enctype="multipart/form-data" action="index.php?" id="pdfsettings" name="pdfsettings" method="post" >
 	<input type="hidden" name="module" value="Pdfsettings">
 	<input type="hidden" name="parenttab" value="Tools">
-	<input type="hidden" name="fld_module" id="fld_module" value="{$MODULEVIEW }">
+	<input type="hidden" name="fld_module" id="fld_module" value="{$MODULEVIEW}">
 	<input type="hidden" name="action" id="action" value="UpdatePDFSettings">
 	<table align="center" border="0" cellpadding="0" cellspacing="0" width="98%">
 		<tr>

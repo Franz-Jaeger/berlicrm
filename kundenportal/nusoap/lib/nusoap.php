@@ -1665,7 +1665,7 @@ class nusoap_xmlschema extends nusoap_base  {
 				}
 				// compositor wraps elements
 				if (isset($attrs['compositor']) && ($attrs['compositor'] != '')) {
-					$contentStr = "  <$schemaPrefix:$attrs[compositor]>\n".$contentStr."  </$schemaPrefix:$attrs[compositor]>\n";
+					$contentStr = "  <$schemaPrefix:{$attrs['compositor']}>\n".$contentStr."  </$schemaPrefix:{$attrs['compositor']}>\n";
 				}
 			}
 			// attributes
@@ -1918,8 +1918,8 @@ class nusoap_xmlschema extends nusoap_base  {
 				$buffer .= '<table>';
 				foreach($typeDef['elements'] as $child => $childDef){
 					$buffer .= "
-					<tr><td align='right'>$childDef[name] (type: ".$this->getLocalPart($childDef['type'])."):</td>
-					<td><input type='text' name='parameters[".$name."][$childDef[name]]'></td></tr>";
+					<tr><td align='right'>{$childDef['name']} (type: ".$this->getLocalPart($childDef['type'])."):</td>
+					<td><input type='text' name='parameters[{$name}][{$childDef['name']}]'></td></tr>";
 				}
 				$buffer .= '</table>';
 			// if array
@@ -1927,8 +1927,8 @@ class nusoap_xmlschema extends nusoap_base  {
 				$buffer .= '<table>';
 				for($i=0;$i < 3; $i++){
 					$buffer .= "
-					<tr><td align='right'>array item (type: $typeDef[arrayType]):</td>
-					<td><input type='text' name='parameters[".$name."][]'></td></tr>";
+					<tr><td align='right'>array item (type: {$typeDef['arrayType']}):</td>
+					<td><input type='text' name='parameters[{$name}][]'></td></tr>";
 				}
 				$buffer .= '</table>';
 			// if scalar
@@ -3546,7 +3546,7 @@ class nusoap_server extends nusoap_base {
 	 * @var boolean
 	 * @access public
 	 */
-    var $decode_utf8 = true;
+    var $decode_utf8 = false;
 
 	/**
 	 * HTTP headers of response
@@ -4329,7 +4329,7 @@ class nusoap_server extends nusoap_base {
 			}
 		} else {
 			// should be US-ASCII for HTTP 1.0 or ISO-8859-1 for HTTP 1.1
-			$this->xml_encoding = 'ISO-8859-1';
+			$this->xml_encoding = 'UTF-8';
 		}
 		$this->debug('Use encoding: ' . $this->xml_encoding . ' when creating nusoap_parser');
 		// parse response, get soap parser obj
@@ -4949,11 +4949,11 @@ class wsdl extends nusoap_base {
                 case 'message':
                     if ($name == 'part') {
 			            if (isset($attrs['type'])) {
-		                    $this->debug("msg " . $this->currentMessage . ": found part (with type) $attrs[name]: " . implode(',', $attrs));
+		                    $this->debug("msg " . $this->currentMessage . ": found part (with type) {$attrs['name']}: " . implode(',', $attrs));
 		                    $this->messages[$this->currentMessage][$attrs['name']] = $attrs['type'];
             			} 
 			            if (isset($attrs['element'])) {
-		                    $this->debug("msg " . $this->currentMessage . ": found part (with element) $attrs[name]: " . implode(',', $attrs));
+		                    $this->debug("msg " . $this->currentMessage . ": found part (with element) {$attrs['name']}: " . implode(',', $attrs));
 			                $this->messages[$this->currentMessage][$attrs['name']] = $attrs['element'] . '^';
 			            } 
         			} 
@@ -6136,7 +6136,7 @@ class wsdl extends nusoap_base {
 				$rows = sizeof($value);
 				$contents = '';
 				foreach($value as $k => $v) {
-					$this->debug("serializing array element: $k, $v of type: $typeDef[arrayType]");
+					$this->debug("serializing array element: $k, $v of type: {$typeDef['arrayType']}");
 					//if (strpos($typeDef['arrayType'], ':') ) {
 					if (!in_array($typeDef['arrayType'],$this->typemap['http://www.w3.org/2001/XMLSchema'])) {
 					    $contents .= $this->serializeType('item', $typeDef['arrayType'], $v, $use);
@@ -6570,7 +6570,7 @@ class nusoap_parser extends nusoap_base {
 	// array of id => hrefs => pos
 	var $multirefs = array();
 	// toggle for auto-decoding element content
-	var $decode_utf8 = true;
+	var $decode_utf8 = false;
 
 	/**
 	* constructor that actually does the parsing
@@ -6581,7 +6581,7 @@ class nusoap_parser extends nusoap_base {
 	* @param    string $decode_utf8 whether to decode UTF-8 to ISO-8859-1
 	* @access   public
 	*/
-	function __construct($xml,$encoding='UTF-8',$method='',$decode_utf8=true){
+	function __construct($xml,$encoding='UTF-8',$method='',$decode_utf8=false){
 		parent::nusoap_base();
 		$this->xml = $xml;
 		$this->xml_encoding = $encoding;
@@ -6666,7 +6666,7 @@ class nusoap_parser extends nusoap_base {
 			$this->setError('xml was empty, didn\'t parse!');
 		}
 	}
-    function nusoap_parser($xml,$encoding='UTF-8',$method='',$decode_utf8=true){
+    function nusoap_parser($xml,$encoding='UTF-8',$method='',$decode_utf8=false){
         self::__construct($xml,$encoding,$method,$decode_utf8);
     }
 	/**
@@ -7217,7 +7217,7 @@ class nusoap_client extends nusoap_base  {
 	var $response = '';				// HTTP response
 	var $responseData = '';			// SOAP payload of response
 	var $cookies = array();			// Cookies from response or for request
-    var $decode_utf8 = true;		// toggles whether the parser decodes element content w/ utf8_decode()
+    var $decode_utf8 = false;		// toggles whether the parser decodes element content w/ utf8_decode()
 	var $operations = array();		// WSDL operations, empty for WSDL initialization error
 	var $curl_options = array();	// User-specified cURL options
 	var $bindingType = '';			// WSDL operation binding type
